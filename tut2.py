@@ -38,9 +38,10 @@ def view_data() -> dict:
     return data
 
 
-# view patient by ID
+# Implemeting Path parameter
+# search patient by ID
 @app.get("/patient/{pat_id}")
-def view_patient(pat_id: str = Path(
+def search_patient(pat_id: str = Path(
     ...,
     description="Enter Patient ID",
     example="P001"
@@ -53,6 +54,24 @@ def view_patient(pat_id: str = Path(
     raise HTTPException(status_code=404, detail="Patient Not Found!")
 
 
+# search patient by name
+@app.get("/patient/name/{pat_name}")
+def search_name(pat_name: str = Path(
+    ...,
+    description="Enter the name of the patient",
+    example="Ravi Mehta"
+)) -> dict:
+    data = load_data()
+
+    for patient_id, patient_info in data.items():
+        if patient_info["name"].lower() == pat_name.lower():
+            return patient_info
+
+    raise HTTPException(
+        status_code=404, detail=f"Patient '{pat_name}' Not Found!")
+
+
+# Implemeting Query parameter
 # sort patient by weight, height and BMI or in ascending or descending order
 @app.get("/sort")
 def sort_data(
@@ -81,4 +100,3 @@ def sort_data(
         data.values(), key=lambda x: x.get(sort_by, 0), reverse=sort_order)
 
     return sorted_data
-

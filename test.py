@@ -3,4 +3,5 @@ import json
 with open("./data/patients.json") as f:
     data = json.load(f)
 
-print(data["P001"])
+for patient_id, patient_info in data.items():
+    print(patient_info)
